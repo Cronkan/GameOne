@@ -10,6 +10,7 @@ namespace GameOne
         public MainWindow()
         {
             InitializeComponent();
+            var test = "hello";
         }
     }
 }
