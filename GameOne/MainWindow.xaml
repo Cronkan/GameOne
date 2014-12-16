@@ -6,7 +6,7 @@
         SizeToContent="WidthAndHeight"
         >
     <StackPanel>
-        <Grid Margin="50">
+        <Grid >
             <Grid.Resources>
 
                 <!-- This template presents the Piece object.  Note that you can't set
@@ -20,8 +20,8 @@
                 <DataTemplate DataType="{x:Type gameOne:Pawn}">
                     <Grid>
                     <Rectangle Fill="{Binding Color}"
-                           Width="40"
-                           Height="40" >
+                           Width="49"
+                           Height="49" >
 
                     </Rectangle>
                         <Label Content="{Binding health}" FontWeight="Bold" FontSize="15" HorizontalContentAlignment="Center" VerticalAlignment="Center"></Label>
@@ -38,8 +38,8 @@
                     <Setter Property="Grid.Column"
                         Value="{Binding col}" />
 
-                    <EventSetter Event="MouseDown" Handler="clickRectangle"/>
-
+                    <EventSetter Event="MouseLeftButtonDown" Handler="clickRectangle"/>
+                    <EventSetter Event="MouseRightButtonDown"  Handler="rightClickRectangle"/>
                 </Style>
 
             </Grid.Resources>
@@ -58,9 +58,15 @@
 
         </Grid>
 
-
-        <Button Content="Roll a Dice" Height="23" HorizontalAlignment="Left" Margin="194,151,0,0" Name="button1" VerticalAlignment="Top" Width="75" Click="DiceRoll" />
-        <Label  Content="{Binding game.currentRollDice}"></Label>
+        <Button Content="Roll a Dice" Height="23" HorizontalAlignment="Left"  Name="button1" VerticalAlignment="Top" Width="75" Click="DiceRoll" />
+        <StackPanel Orientation="Horizontal">
+            <Label FontSize="15">RolledDice: </Label>
+        <Label Content="{Binding game.currentRollDice}" FontSize="15" FontWeight="Bold"></Label>
+            <Label FontSize="15">Moves Left:</Label>
+            <Label Content="{Binding game.currentMoves}" FontSize="15" FontWeight="Bold"> </Label>
+            <Label FontSize="15">Current Player:</Label>
+            <Label Content="{Binding game.currentPlayer}" FontSize="15" FontWeight="Bold"></Label>
+        </StackPanel>
     </StackPanel>
 
 </Window>

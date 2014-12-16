@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -32,14 +33,15 @@ namespace GameOne
             }
         }
 
-        public static Pawn currentPawn { get; set; }
-      
+
         private Game _game;
+
 
         public MainWindow()
         {
             InitializeComponent();
             boardSize = 10;
+            /*
             Game lastGame = DataHandler.importFromJson<Game>("game.json") as Game;
             if (lastGame != null)
             {
@@ -48,28 +50,19 @@ namespace GameOne
 
             }
             else
-            {
+            {*/
                 game = new Game();
                 FillBoard();
                 AddPawns();
-            }
+            //}
 
-            
-
-          
-            
-
-           
             Board.DataContext = new
             {
                 grid = game.grid,
                 boardSize = boardSize,
             };
 
-           
-           
             this.DataContext = this;
-            
         }
 
         public void FillBoard()
@@ -86,19 +79,26 @@ namespace GameOne
 
         public void AddPawns()
         {
-            game.grid.Add(new Pawn(1, "Red", 10, 0, 3));
-            game.grid.Add(new Pawn(2, "Blue", 10, 6, 3));
-            game.grid.Add(new Pawn(1, "Pink", 10, 3, 3));
+            game.grid.Add(new Pawn(1, "Pink", 10, 4, 2));
+            game.grid.Add(new Pawn(1, "Pink", 10, 4, 3));
+            game.grid.Add(new Pawn(1, "Pink", 10, 4, 4));
+            game.grid.Add(new Pawn(1, "Pink", 10, 4, 5));
+            game.grid.Add(new Pawn(1, "Pink", 10, 4, 6));
+            game.grid.Add(new Pawn(2, "Teal", 10, 5, 2));
+            game.grid.Add(new Pawn(2, "Teal", 10, 5, 3));
+            game.grid.Add(new Pawn(2, "Teal", 10, 5, 4));
+            game.grid.Add(new Pawn(2, "Teal", 10, 5, 5));
+            game.grid.Add(new Pawn(2, "Teal", 10, 5, 6));
+           
           
         }
 
-
-        private void clickRectangle(object sender, RoutedEventArgs e)
+        private void rightClickRectangle(object sender, RoutedEventArgs e)
         {
             var obj = sender as ContentPresenter;
 
 
-            if (obj.Content.GetType() == typeof(Pawn) && currentPawn == null)
+            if (obj.Content.GetType() == typeof(Pawn) && game.currentPawn == null)
             {
 
                 Pawn thePawn = (Pawn)(from gridItem in game.grid
@@ -106,33 +106,50 @@ namespace GameOne
                                             ((Pawn)gridItem).col == Grid.GetColumn((UIElement)sender) &&
                                             ((Pawn)gridItem).row == Grid.GetRow((UIElement)sender)
                                       select gridItem).First();
-
-                thePawn.Color = "Green";
-                currentPawn = thePawn;
-
+                game.setPawnToSplit(thePawn);
 
             }
-            else if (obj.Content.GetType() == typeof(BoardTile) && currentPawn != null)
+        }
+        private void clickRectangle(object sender, RoutedEventArgs e)
+        {
+            var obj = sender as ContentPresenter;
+            if (obj.Content.GetType() == typeof(BoardTile) && game.pawnToSplit != null)
             {
-
-                currentPawn.col = Grid.GetColumn((UIElement)sender);
-                currentPawn.row = Grid.GetRow((UIElement)sender);
-                
-                currentPawn = null;
-                
+                game.SplitPawn(Grid.GetColumn((UIElement)sender), Grid.GetRow((UIElement)sender));
 
             }
-            else if(currentPawn != null && obj.Content.GetType() == typeof(Pawn))
+            else
             {
-                Pawn enemyPawn = (Pawn)(from gridItem in game.grid
-                                      where gridItem.GetType() == typeof(Pawn) &&
-                                            ((Pawn)gridItem).col == Grid.GetColumn((UIElement)sender) &&
-                                            ((Pawn)gridItem).row == Grid.GetRow((UIElement)sender)
-                                      select gridItem).First();
-                game.AttackPawn(enemyPawn);   
+                if (obj.Content.GetType() == typeof (Pawn) && game.currentPawn == null)
+                {
+
+                    Pawn thePawn = (Pawn) (from gridItem in game.grid
+                        where gridItem.GetType() == typeof (Pawn) &&
+                              ((Pawn) gridItem).col == Grid.GetColumn((UIElement) sender) &&
+                              ((Pawn) gridItem).row == Grid.GetRow((UIElement) sender)
+                        select gridItem).First();
+                    game.setCurrentPawn(thePawn);
+
+                }
+                else if (obj.Content.GetType() == typeof (BoardTile) && game.currentPawn != null)
+                {
+
+                    game.MovePawn(Grid.GetColumn((UIElement) sender), Grid.GetRow((UIElement) sender));
+
+                }
+                if (game.currentPawn != null && obj.Content.GetType() == typeof (Pawn))
+                {
+                    Pawn enemyPawn = (Pawn) (from gridItem in game.grid
+                        where gridItem.GetType() == typeof (Pawn) &&
+                              ((Pawn) gridItem).col == Grid.GetColumn((UIElement) sender) &&
+                              ((Pawn) gridItem).row == Grid.GetRow((UIElement) sender)
+                        select gridItem).First();
+                    game.setCurrentPawn(enemyPawn);
+                    game.AttackPawn(enemyPawn);
+                 
+                }
+
             }
-
-
 
 
         }

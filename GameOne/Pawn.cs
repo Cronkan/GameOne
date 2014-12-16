@@ -93,5 +93,10 @@ namespace GameOne
             var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public void resetColor()
+        {
+            Color = player == 1 ? "Pink" : "Teal";
+        }
     }
 }
