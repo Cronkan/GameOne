@@ -1,28 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media.Media3D;
 using GameOne.Annotations;
 
 namespace GameOne
 {
     public class Game : INotifyPropertyChanged
     {
-        public List<Pawn> pawns { get; set; }
-        public String[] gameState { get; set; }
         private Random rand;
-        public int currentRollDice { get; set; }
+        private int _currentRollDice;
+        private static ObservableCollection<object> _grid;
+        public ObservableCollection<object> grid
+        {
+            get { return _grid; }
+            set
+            {
+                _grid = value;
+            }
+        }
+        public int currentRollDice
+        {
+            get { return _currentRollDice; }
+            set
+            {
+                _currentRollDice = value; 
+                OnPropertyChanged("currentRollDice");
+            }
+        }
 
         public Game()
         {
-            pawns = new List<Pawn>();
-            rand = new Random();
-            SaveState();
-        
+          rand = new Random();
+     
+            currentRollDice = 0;
+            grid = new ObservableCollection<object>();
+            
+
         }
            public event PropertyChangedEventHandler PropertyChanged;
 
@@ -70,15 +92,20 @@ namespace GameOne
             
         }
 
-        public void AttackPawn()
+        public void AttackPawn(Pawn enemy)
         {
-            
+            if (MainWindow.currentPawn.player != enemy.player)
+            {
+                enemy.health -= currentRollDice;
+            }
+            if (enemy.health <= 0)
+            {
+                RemovePawn(enemy);
+            }
+            SaveState();
         }
 
-        public void RemovePawn()
-        {
-            
-        }
+ 
 
         public void UpdatePawns()
         {
@@ -91,11 +118,32 @@ namespace GameOne
 
         }
 
-        public void ReloadState()
+      
+
+        public static event NotifyCollectionChangedEventHandler CollectionChanged;
+        public void Add(Pawn item)
         {
-            
+            grid.Add(item);
+            OnCollectionChanged(
+               new NotifyCollectionChangedEventArgs(
+                 NotifyCollectionChangedAction.Add, item));
         }
 
+        
+
+        public void RemovePawn(Pawn item)
+        {
+            grid.Remove(item);
+            OnCollectionChanged(
+              new NotifyCollectionChangedEventArgs(
+                NotifyCollectionChangedAction.Remove, item));
+        }
+        private void OnCollectionChanged(NotifyCollectionChangedEventArgs args)
+        {
+            var handler = CollectionChanged;
+            if (handler != null)
+                handler(this, args);
+        }
      
     }
 }

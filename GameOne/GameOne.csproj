@@ -60,6 +60,7 @@
     <Compile Include="BoardTile.cs" />
     <Compile Include="DataHandler.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="GridHelpers.cs" />
     <Compile Include="Pawn.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Rules.cs" />

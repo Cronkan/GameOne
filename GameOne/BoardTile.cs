@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
+
 
 namespace GameOne
 {
@@ -11,40 +13,27 @@ namespace GameOne
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private String setColor()
+        private Brush setColor()
         {
-            return ((PosX + PosY) % 2 == 0) ? "DarkRed" : "Tan";
+            return ((row + col) % 2 == 0) ? new SolidColorBrush(Color.FromArgb(255, 165, 245, 255)) : new SolidColorBrush(Color.FromArgb(255, 183, 165, 255)) ;
         }
 
 
-        public BoardTile(int posX, int posY)
+        public BoardTile(int row, int col)
         {
-            this.PosX = posX;
-            this.PosY = posY;
-            this.Color = setColor();
-            this.Coords = posX.ToString() + "," + posY.ToString();
+            this.row = row;
+            this.col = col;
+        
+            this.color = setColor();
         }
 
-        String Name;
-        String Color;
-        String Coords;
-        int PosX;
-        int PosY;
+        public int row { get; set; }
 
-        public String name { get { return this.Name; } set { this.Name = value; } }
-        public String color { get { return this.Color; } }
-        public String coords { get { return this.Coords; } }
+        public int col { get; set; }
 
-        public void setName(String n)
-        {
-            this.Name = n;
-            OnPropertyChanged("name");
-        }
+        public Brush color { get; set; }
+        public String coords { get; set; }
 
-        public String getName()
-        {
-            return this.Name;
-        }
 
         protected void OnPropertyChanged(string name)
         {

@@ -12,7 +12,7 @@ namespace GameOne
 {
     class DataHandler
     {
-        public static T importFromJson<T>(string path)
+        public static object importFromJson<T>(string path)
         {
             try
             {
@@ -22,7 +22,7 @@ namespace GameOne
             catch (Exception e)
             {
                 MessageBox.Show("Could not import file!", "ERROR!", MessageBoxButton.OK, MessageBoxImage.Error);
-                throw e;
+                return null;
             }
         }
         public static T jsonToObject<T>(string json)
