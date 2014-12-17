@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -12,6 +13,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using GameOne.Annotations;
+using GameOneDataLayer;
 
 namespace GameOne
 {
@@ -160,10 +162,22 @@ namespace GameOne
         {
            game.RollDice();
           
-          
+          SaveGame();
             
         }
 
+        public void SaveGame()
+        {
+       
+            using (var ctx = new Context())
+            {
+
+                //ctx.Game.Add(game);
+                ctx.Pawns.Add(new Pawn(2,"pink",2,2,2));
+                ctx.SaveChanges();
+            }
+
+        }
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

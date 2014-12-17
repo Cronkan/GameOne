@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -11,6 +13,9 @@ namespace GameOne
 {
     public class Pawn : INotifyPropertyChanged
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public long Sessionid { get; set; }
         private string color;
         private int _col;
         private int _row;
@@ -47,6 +52,7 @@ namespace GameOne
             }
         }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int player
         {
             get { return _player; }

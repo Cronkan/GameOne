@@ -3,22 +3,41 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Media3D;
+using System.Xml.Serialization;
 using GameOne.Annotations;
 
 namespace GameOne
 {
     public class Game : INotifyPropertyChanged
     {
-        private Random rand;
+        [Key]
+        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
+        public int GameId { get; set; }
+        public int currentMoves
+        {
+            get { return _currentMoves; }
+            set
+            {
+                _currentMoves = value;
+                OnPropertyChanged("currentMoves");
+            }
+        }
+    
+        public Pawn pawnToSplit { get; set; }
 
+        private Random rand;
+        [NotMapped]
         public Pawn currentPawn
         {
             get { return _currentPawn; }
@@ -44,6 +63,7 @@ namespace GameOne
         private int _currentMoves;
         private Pawn _currentPawn;
         private static ObservableCollection<object> _grid;
+       
         public ObservableCollection<object> grid
         {
             get { return _grid; }
@@ -173,7 +193,7 @@ namespace GameOne
             }
         }
 
-        private bool checkDirection(int col, int row)
+        private bool checkDirection(int? col, int? row)
         {
             Debug.WriteLine("" + col + row + currentPawn.col + currentPawn.row);
             Debug.WriteLine((currentPawn.col == col + 1 && currentPawn.row == row));
@@ -204,17 +224,7 @@ namespace GameOne
             return false;
         }
 
-        public int currentMoves
-        {
-            get { return _currentMoves; }
-            set
-            {
-                _currentMoves = value;
-                OnPropertyChanged("currentMoves");
-            }
-        }
-
-        public Pawn pawnToSplit { get; set; }
+      
 
 
         public void UpdatePawns()
@@ -224,6 +234,7 @@ namespace GameOne
 
         public void SaveState()
         {
+           
 
             //DataHandler.exportToJson(this,"game.json");
 
