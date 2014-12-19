@@ -24,7 +24,8 @@ namespace GameOne
     {
         
 
-        public int boardSize { get; set; }
+        public static int boardSize { get; set; }
+        public AI Ai { get; set; }
         public Game game
         {
             get { return _game; }
@@ -54,8 +55,9 @@ namespace GameOne
             else
             {*/
                 game = new Game();
+            Ai = new AI(game);
                 FillBoard();
-                AddPawns();
+                game.NewGame();
             //}
 
             Board.DataContext = new
@@ -65,7 +67,10 @@ namespace GameOne
             };
 
             this.DataContext = this;
+           
         }
+
+       
 
         public void FillBoard()
         {
@@ -78,22 +83,7 @@ namespace GameOne
 
             }
         }
-
-        public void AddPawns()
-        {
-            game.grid.Add(new Pawn(1, "Pink", 10, 4, 2));
-            game.grid.Add(new Pawn(1, "Pink", 10, 4, 3));
-            game.grid.Add(new Pawn(1, "Pink", 10, 4, 4));
-            game.grid.Add(new Pawn(1, "Pink", 10, 4, 5));
-            game.grid.Add(new Pawn(1, "Pink", 10, 4, 6));
-            game.grid.Add(new Pawn(2, "Teal", 10, 5, 2));
-            game.grid.Add(new Pawn(2, "Teal", 10, 5, 3));
-            game.grid.Add(new Pawn(2, "Teal", 10, 5, 4));
-            game.grid.Add(new Pawn(2, "Teal", 10, 5, 5));
-            game.grid.Add(new Pawn(2, "Teal", 10, 5, 6));
-           
-          
-        }
+        
 
         private void rightClickRectangle(object sender, RoutedEventArgs e)
         {
@@ -158,11 +148,11 @@ namespace GameOne
 
         
 
-        private void DiceRoll(object sender, RoutedEventArgs e)
+        private void PlayAi(object sender, RoutedEventArgs e)
         {
-           game.RollDice();
-          
-          SaveGame();
+          // game.RollDice();
+          Ai.StartAi();
+          //SaveGame();
             
         }
 
@@ -185,6 +175,11 @@ namespace GameOne
         {
             var handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void ChangePlayer(object sender, RoutedEventArgs e)
+        {
+            game.ChangePlayer();
         }
     }
 }

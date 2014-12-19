@@ -10,11 +10,7 @@ namespace GameOne
 {
     public class Context : DbContext
     {
-        public Context()
-            : base()
-        {
 
-        }
         public DbSet<Game> Game { get; set; }
         public DbSet<Pawn> Pawns { get; set; }
 
