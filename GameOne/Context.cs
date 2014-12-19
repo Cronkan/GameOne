@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GameOne;
 
-namespace GameOneDataLayer
+namespace GameOne
 {
     public class Context : DbContext
     {
