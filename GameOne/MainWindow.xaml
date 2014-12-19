@@ -3,10 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:gameOne="clr-namespace:GameOne"
         Title="MainWindow" Height="600" Width="800"
-        SizeToContent="WidthAndHeight"
-        >
+        SizeToContent="WidthAndHeight">
     <StackPanel>
-        <Grid >
+        <Grid>
             <Grid.Resources>
 
                 <!-- This template presents the Piece object.  Note that you can't set
@@ -14,43 +13,42 @@
                  you *can*, but the Grid won't see them.  See the Style below.  -->
                 <DataTemplate DataType="{x:Type gameOne:BoardTile}">
                     <Rectangle Fill="{Binding color}"
-                           Width="50"
-                           Height="50" />
+                               Width="50"
+                               Height="50" />
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type gameOne:Pawn}">
                     <Grid>
-                    <Rectangle Fill="{Binding Color}"
-                           Width="49"
-                           Height="49" >
-
-                    </Rectangle>
-                        <Label Content="{Binding health}" FontWeight="Bold" FontSize="15" HorizontalContentAlignment="Center" VerticalAlignment="Center"></Label>
-                            </Grid>
+                        <Rectangle Fill="{Binding Color}"
+                                   Width="49"
+                                   Height="49" />
+                        <Label Content="{Binding health}" FontWeight="Bold" FontSize="15"
+                               HorizontalContentAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
                 </DataTemplate>
-   
+
                 <!-- When the ItemsControl creates its items, it wraps each item in a
                  ContentPresenter.  You have to set Grid.Row and Grid.Column
                  on this ContentPresenter in order for the Grid to see them. -->
                 <Style TargetType="{x:Type ContentPresenter}">
 
                     <Setter Property="Grid.Row"
-                        Value="{Binding row}" />
+                            Value="{Binding row}" />
                     <Setter Property="Grid.Column"
-                        Value="{Binding col}" />
+                            Value="{Binding col}" />
 
-                    <EventSetter Event="MouseLeftButtonDown" Handler="clickRectangle"/>
-                    <EventSetter Event="MouseRightButtonDown"  Handler="rightClickRectangle"/>
+                    <EventSetter Event="MouseLeftButtonDown" Handler="clickRectangle" />
+                    <EventSetter Event="MouseRightButtonDown" Handler="rightClickRectangle" />
                 </Style>
 
             </Grid.Resources>
 
             <ItemsControl x:Name="Board"
                           ItemsSource="{Binding grid}">
-          
+
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Grid gameOne:GridHelpers.RowCount="{Binding boardSize}"
-      gameOne:GridHelpers.ColumnCount="{Binding boardSize}" />
+                              gameOne:GridHelpers.ColumnCount="{Binding boardSize}" />
 
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
@@ -58,16 +56,24 @@
 
         </Grid>
         <StackPanel Orientation="Horizontal">
-            <Button Content="Play AI" Height="23" HorizontalAlignment="Left"  Name="button1" VerticalAlignment="Top" Width="75" Click="PlayAi" />
-            <Button Content="Next Player" Height="23" HorizontalAlignment="Left"  Name="button2" VerticalAlignment="Top" Width="75" Click="ChangePlayer" />
-            </StackPanel>
+            <Button Content="Play AI" Height="23" HorizontalAlignment="Left" Name="button1" VerticalAlignment="Top"
+                    Width="75" Click="PlayAi" />
+            <Button Content="Next Player" Height="23" HorizontalAlignment="Left" Name="button2" VerticalAlignment="Top"
+                    Width="75" Click="ChangePlayer" />
+            <Button Content="Save" Height="23" HorizontalAlignment="Left" Name="button3" VerticalAlignment="Top"
+                    Width="75" Click="SaveClick" />
+            <Button Content="Load" Height="23" HorizontalAlignment="Left" Name="button4" VerticalAlignment="Top"
+                    Width="75" Click="LoadClick" />
+            <Button Content="New Game" Height="23" HorizontalAlignment="Left" Name="button5" VerticalAlignment="Top"
+                    Width="75" Click="NewGameClick" />
+        </StackPanel>
         <StackPanel Orientation="Horizontal">
             <Label FontSize="15">RolledDice: </Label>
-        <Label Content="{Binding game.currentRollDice}" FontSize="15" FontWeight="Bold"></Label>
+            <Label Content="{Binding game.currentRollDice}" FontSize="15" FontWeight="Bold" />
             <Label FontSize="15">Moves Left:</Label>
-            <Label Content="{Binding game.currentMoves}" FontSize="15" FontWeight="Bold"> </Label>
+            <Label Content="{Binding game.currentMoves}" FontSize="15" FontWeight="Bold" />
             <Label FontSize="15">Current Player:</Label>
-            <Label Content="{Binding game.currentPlayer}" FontSize="15" FontWeight="Bold"></Label>
+            <Label Content="{Binding game.currentPlayer}" FontSize="15" FontWeight="Bold" />
         </StackPanel>
     </StackPanel>
 

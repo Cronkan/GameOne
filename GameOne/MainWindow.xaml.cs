@@ -1,42 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Data.Entity;
-using System.Diagnostics;
+﻿using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Media;
-using System.Windows.Shapes;
 using GameOne.Annotations;
-
 
 namespace GameOne
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    ///     Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : INotifyPropertyChanged
     {
-        
-
-        public static int boardSize { get; set; }
-        public AI Ai { get; set; }
-        public Game game
-        {
-            get { return _game; }
-            set
-            {
-                _game = value;
-               OnPropertyChanged("game");
-            }
-        }
-
-
         private Game _game;
 
 
@@ -54,23 +29,41 @@ namespace GameOne
             }
             else
             {*/
-                game = new Game();
+            game = new Game(boardSize);
             Ai = new AI(game);
-                FillBoard();
-                game.NewGame();
+            FillBoard();
+            game.NewGame();
             //}
 
             Board.DataContext = new
             {
-                grid = game.grid,
-                boardSize = boardSize,
+                game.grid,
+                boardSize,
             };
 
-            this.DataContext = this;
-           
+            DataContext = this;
+            watcher = new Watcher(game);
+            watcher.Run();
+            game.ContinueGame();
         }
 
-       
+        public static int boardSize { get; set; }
+        public AI Ai { get; set; }
+
+        public Game game
+        {
+            get { return _game; }
+            set
+            {
+                _game = value;
+                OnPropertyChanged("game");
+            }
+        }
+
+
+        public Watcher watcher { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
+
 
         public void FillBoard()
         {
@@ -80,106 +73,98 @@ namespace GameOne
                 {
                     game.grid.Add(new BoardTile(i, j));
                 }
-
             }
         }
-        
+
 
         private void rightClickRectangle(object sender, RoutedEventArgs e)
         {
             var obj = sender as ContentPresenter;
 
 
-            if (obj.Content.GetType() == typeof(Pawn) && game.currentPawn == null)
+            if (obj.Content.GetType() == typeof (Pawn) && game.currentPawn == null)
             {
-
-                Pawn thePawn = (Pawn)(from gridItem in game.grid
-                                      where gridItem.GetType() == typeof(Pawn) &&
-                                            ((Pawn)gridItem).col == Grid.GetColumn((UIElement)sender) &&
-                                            ((Pawn)gridItem).row == Grid.GetRow((UIElement)sender)
-                                      select gridItem).First();
+                var thePawn = (Pawn) (from gridItem in game.grid
+                    where gridItem.GetType() == typeof (Pawn) &&
+                          ((Pawn) gridItem).col == Grid.GetColumn((UIElement) sender) &&
+                          ((Pawn) gridItem).row == Grid.GetRow((UIElement) sender)
+                    select gridItem).First();
                 game.setPawnToSplit(thePawn);
-
             }
         }
+
         private void clickRectangle(object sender, RoutedEventArgs e)
         {
             var obj = sender as ContentPresenter;
-            if (obj.Content.GetType() == typeof(BoardTile) && game.pawnToSplit != null)
+            if (obj.Content.GetType() == typeof (BoardTile) && game.pawnToSplit != null)
             {
-                game.SplitPawn(Grid.GetColumn((UIElement)sender), Grid.GetRow((UIElement)sender));
-
+                game.SplitPawn(Grid.GetColumn((UIElement) sender), Grid.GetRow((UIElement) sender));
             }
             else
             {
                 if (obj.Content.GetType() == typeof (Pawn) && game.currentPawn == null)
                 {
-
-                    Pawn thePawn = (Pawn) (from gridItem in game.grid
+                    var thePawn = (Pawn) (from gridItem in game.grid
                         where gridItem.GetType() == typeof (Pawn) &&
                               ((Pawn) gridItem).col == Grid.GetColumn((UIElement) sender) &&
                               ((Pawn) gridItem).row == Grid.GetRow((UIElement) sender)
                         select gridItem).First();
                     game.setCurrentPawn(thePawn);
-
                 }
                 else if (obj.Content.GetType() == typeof (BoardTile) && game.currentPawn != null)
                 {
-
                     game.MovePawn(Grid.GetColumn((UIElement) sender), Grid.GetRow((UIElement) sender));
-
                 }
                 if (game.currentPawn != null && obj.Content.GetType() == typeof (Pawn))
                 {
-                    Pawn enemyPawn = (Pawn) (from gridItem in game.grid
+                    var enemyPawn = (Pawn) (from gridItem in game.grid
                         where gridItem.GetType() == typeof (Pawn) &&
                               ((Pawn) gridItem).col == Grid.GetColumn((UIElement) sender) &&
                               ((Pawn) gridItem).row == Grid.GetRow((UIElement) sender)
                         select gridItem).First();
                     game.setCurrentPawn(enemyPawn);
                     game.AttackPawn(enemyPawn);
-                 
                 }
-
             }
-
-
         }
 
-        
 
         private void PlayAi(object sender, RoutedEventArgs e)
         {
-          // game.RollDice();
-          Ai.StartAi();
-          //SaveGame();
-            
+            // game.RollDice();
+            Ai.StartAi();
+            //SaveGame();
         }
 
-        public void SaveGame()
-        {
-       
-            using (var ctx = new Context())
-            {
-
-                //ctx.Game.Add(game);
-                ctx.Pawns.Add(new Pawn(2,"pink",2,2,2));
-                ctx.SaveChanges();
-            }
-
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
+    
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            var handler = PropertyChanged;
+            PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void ChangePlayer(object sender, RoutedEventArgs e)
         {
             game.ChangePlayer();
+            game.RollDice();
+        }
+
+        private void SaveClick(object sender, RoutedEventArgs e)
+        {
+            game.SaveState();
+        }
+
+        private void LoadClick(object sender, RoutedEventArgs e)
+        {
+            game.ContinueGame();
+        }
+
+        private void NewGameClick(object sender, RoutedEventArgs e)
+        {
+            game.EndGame();
+            //        game.NewGame();
         }
     }
 }

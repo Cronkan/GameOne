@@ -1,26 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using GameOne.Annotations;
 
 namespace GameOne
 {
     public class Pawn : INotifyPropertyChanged
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public long Sessionid { get; set; }
-        private string color;
         private int _col;
-        private int _row;
-        private int _player;
         private int _health;
+        private int _player;
+        private int _row;
+        private string color;
+
+        public Pawn(int player, string color, int health, int col, int row)
+        {
+            Color = color;
+            this.health = health;
+            this.col = col;
+            this.row = row;
+            this.player = player;
+        }
 
         public int health
         {
@@ -71,32 +71,20 @@ namespace GameOne
                 color = value;
                 OnPropertyChanged("Color");
             }
-        }       
-
-        public Pawn(int player, string color, int health, int col, int row)
-        {
-            this.Color = color;
-            this.health = health;
-            this.col = col;
-            this.row = row;
-            this.player = player;
-
         }
 
-   
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public void increaseHealth()
         {
-            this.health++;
+            health++;
         }
-
-     
-        public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            var handler = PropertyChanged;
+            PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
 
