@@ -13,13 +13,13 @@ namespace GameOne
             try
 
             {
-                Thread.Sleep(100);
+                Thread.Sleep(50);
                 string json = File.ReadAllText(path);
                 return JsonConvert.DeserializeObject<T>(json);
             }
             catch (Exception e)
             {
-                MessageBox.Show("Could not import file!" + e, "ERROR!", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Could not load gamestate! Creating new game", "ERROR!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return null;
             }
         }
@@ -42,6 +42,7 @@ namespace GameOne
             try
             {
                 string json = JsonConvert.SerializeObject(data);
+                Thread.Sleep(50);
                 writeTextToFile(json, filename);
             }
             catch (Exception e)

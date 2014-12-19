@@ -97,7 +97,7 @@ namespace GameOne
                     }
                     default:
                     {
-                        Debug.WriteLine(moveAround);
+                       
                         game.setCurrentPawn(myPawn);
                         moveAround = 0;
                         infLoopCount++;

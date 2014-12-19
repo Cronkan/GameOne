@@ -177,7 +177,7 @@ namespace GameOne
             {
                 return;
             }
-            Debug.WriteLine("Got " + currentMoves + " enemy has: " + enemy.health);
+            //Debug.WriteLine("Got " + currentMoves + " enemy has: " + enemy.health);
             if (currentMoves > 0 && currentPawn.player == currentPlayer && currentPawn.player != enemy.player &&
                 checkDirection(enemy.col, enemy.row))
             {
@@ -299,7 +299,7 @@ namespace GameOne
                     var lastgame = (SaveClass) DataHandler.importFromJson<SaveClass>("game.json");
                     if (lastgame == null)
                     {
-                        NewGame();
+                        EndGame();
                         return;
                     }
                     if (grid.Count() != 0)
