@@ -33,7 +33,7 @@ namespace GameOne
                 OnPropertyChanged("currentMoves");
             }
         }
-    
+
         public Pawn pawnToSplit { get; set; }
 
         private Random rand;
@@ -63,7 +63,8 @@ namespace GameOne
         private int _currentMoves;
         private Pawn _currentPawn;
         private static ObservableCollection<object> _grid;
-       
+        public bool gameOver;
+
         public ObservableCollection<object> grid
         {
             get { return _grid; }
@@ -88,6 +89,7 @@ namespace GameOne
             currentPlayer = 1;
             currentRollDice = 0;
             grid = new ObservableCollection<object>();
+            gameOver = false;
 
 
         }
@@ -113,12 +115,43 @@ namespace GameOne
         }
         public void NewGame()
         {
+            AddPawns();
+            gameOver = false;
+            StartGame();
+        }
+        public void AddPawns()
+        {
+            grid.Add(new Pawn(1, "Pink", 10, 4, 2));
+            grid.Add(new Pawn(1, "Pink", 10, 4, 3));
+            grid.Add(new Pawn(1, "Pink", 10, 4, 4));
+            grid.Add(new Pawn(1, "Pink", 10, 4, 5));
+            grid.Add(new Pawn(1, "Pink", 10, 4, 6));
+            grid.Add(new Pawn(2, "Teal", 10, 5, 2));
+            grid.Add(new Pawn(2, "Teal", 10, 5, 3));
+            grid.Add(new Pawn(2, "Teal", 10, 5, 4));
+            grid.Add(new Pawn(2, "Teal", 10, 5, 5));
+            grid.Add(new Pawn(2, "Teal", 10, 5, 6));
+
 
         }
-
         public void EndGame()
         {
-
+            gameOver = true;
+            MessageBox.Show("Player " + currentPlayer + " Won! Starting new Game");
+             if (currentPawn != null)
+             {
+                 currentPawn = null;
+             }
+            var removeList = (from gridItem in grid
+                               where gridItem.GetType() == typeof(Pawn)
+                               select gridItem).ToList();
+            foreach (var pawn in removeList)
+            {
+                grid.Remove(pawn);
+            }
+           
+            NewGame();
+            
         }
 
         public void ContinueGame()
@@ -145,8 +178,13 @@ namespace GameOne
 
         public void AttackPawn(Pawn enemy)
         {
-            Debug.WriteLine("" + currentPawn.player + " " + currentPlayer + " " + currentPawn.player + " " + currentPlayer);
-            if (currentPawn.player == currentPlayer && currentPawn.player != enemy.player &&
+            //Debug.WriteLine("" + currentPawn.player + " " + currentPlayer + " " + currentPawn.player + " " + currentPlayer);
+            if (currentPawn == null || enemy == null)
+            {
+                return;
+            }
+            Debug.WriteLine("Got "+ currentMoves + " enemy has: " + enemy.health);
+            if (currentMoves > 0 &&currentPawn.player == currentPlayer && currentPawn.player != enemy.player &&
                 checkDirection(enemy.col, enemy.row))
             {
                 enemy.health -= 1;
@@ -156,14 +194,34 @@ namespace GameOne
             if (enemy.health <= 0)
             {
                 RemovePawn(enemy);
-            }
+            } 
             CheckMoves();
+            CheckGameOver();
+            
 
 
             //SaveState();
         }
+
+        private void CheckGameOver()
+        {
+            var checkPlayer1 = from gridItem in grid
+                             where gridItem.GetType() == typeof(Pawn) &&
+                                   ((Pawn)gridItem).player == 1
+                             select gridItem;
+            var checkPlayer2 = from gridItem in grid
+                               where gridItem.GetType() == typeof(Pawn) &&
+                                     ((Pawn)gridItem).player == 2
+                               select gridItem;
+            if (!checkPlayer1.Any() || !checkPlayer2.Any())
+            {
+                EndGame();
+            }
+        }
+
         public void setCurrentPawn(Pawn thePawn)
         {
+            
             if (thePawn.player == currentPlayer)
             {
 
@@ -175,14 +233,16 @@ namespace GameOne
 
                 currentPawn = thePawn;
                 currentPawn.Color = "Blue";
+                Debug.WriteLine("Set current pawn");
 
             }
         }
         private void CheckMoves()
         {
+            
             if (currentMoves <= 0)
             {
-                currentPlayer = currentPlayer != 1 ? 1 : 2;
+                ChangePlayer();
                 if (currentPawn != null)
                 {
                     currentPawn.resetColor();
@@ -193,28 +253,27 @@ namespace GameOne
             }
         }
 
-        private bool checkDirection(int? col, int? row)
+        public void ChangePlayer()
         {
-            Debug.WriteLine("" + col + row + currentPawn.col + currentPawn.row);
-            Debug.WriteLine((currentPawn.col == col + 1 && currentPawn.row == row));
-            Debug.WriteLine((currentPawn.col == col - 1 && currentPawn.row == row));
-            Debug.WriteLine((currentPawn.col == col + 1 && currentPawn.row == row + 1));
-            Debug.WriteLine((currentPawn.col == col + 1 && currentPawn.row == row - 1));
-            Debug.WriteLine((currentPawn.col == col - 1 && currentPawn.row == row - 1));
-            Debug.WriteLine((currentPawn.col == col - 1 && currentPawn.row == row + 1));
+            currentPlayer = currentPlayer != 1 ? 1 : 2;
+        }
+
+        private bool checkDirection(int col, int row)
+        {
+
             //MessageBox.Show("" + currentPawn.col + " " + col + " " +currentPawn.row +" "+ row );
             if (
-                
+
                    (currentPawn.col == col - 1 && currentPawn.row == row)
                 || (currentPawn.col == col && currentPawn.row == row)
-                || (currentPawn.col == col && currentPawn.row == row + 1 )
+                || (currentPawn.col == col && currentPawn.row == row + 1)
                 || (currentPawn.col == col && currentPawn.row == row - 1)
                 || (currentPawn.col == col - 1 && currentPawn.row == row + 1)
                 || (currentPawn.col == col - 1 && currentPawn.row == row - 1)
                 || (currentPawn.col == col + 1 && currentPawn.row == row + 1)
                 || (currentPawn.col == col + 1 && currentPawn.row == row - 1)
                 || (currentPawn.col == col + 1 && currentPawn.row == row)
-             
+
 
                 )
             {
@@ -224,7 +283,7 @@ namespace GameOne
             return false;
         }
 
-      
+
 
 
         public void UpdatePawns()
@@ -234,7 +293,7 @@ namespace GameOne
 
         public void SaveState()
         {
-           
+
 
             //DataHandler.exportToJson(this,"game.json");
 
@@ -244,37 +303,31 @@ namespace GameOne
 
         public void MovePawn(int Column, int Row)
         {
-            /*
-             * TODO: Add better movement
-            MessageBox.Show("" + (currentPawn.row -Row) + " " + (currentPawn.col - Column));
-            if (Row > currentPawn.row && Column < currentPawn.col && (Row - currentPawn.row) <= currentMoves)
+            Debug.WriteLine("Got " + currentMoves);
+            if (currentPawn == null || currentMoves <= 0 || Column - 1 < 0 || Row - 1 < 0 || Column + 1 > MainWindow.boardSize - 1 || Row + 1 > MainWindow.boardSize - 1)
             {
-                currentMoves -=  Row - currentPawn.row;
-                currentPawn.row = Row;
-                currentPawn.col = Column;
+                return;
+
             }
-            else if (Row < currentPawn.row && Column < currentPawn.col && (currentPawn.col - Column) <= currentMoves)
+            foreach (var o in grid)
             {
-                currentMoves -= currentPawn.col - Column;
-                currentPawn.row = Row;
-                currentPawn.col = Column;
+                if (o.GetType() == typeof(Pawn))
+                {
+                    // Debug.WriteLine(((Pawn)o).col + " " + Column + " " + ((Pawn)o).row + " " + Row);
+                    if (((Pawn)o).col == Column && ((Pawn)o).row == Row)
+                    {
+                        Debug.WriteLine(((Pawn)o).col == Column && ((Pawn)o).row == Row);
+
+                        return;
+                    }
+                }
+
             }
-            else if (Row > currentPawn.row && Column > currentPawn.col && ( currentPawn.row - Row) <= currentMoves)
-            {
-                currentMoves -= currentPawn.row - Row;
-                currentPawn.row = Row;
-                currentPawn.col = Column;
-            }
-                else if (Row < currentPawn.row && Column > currentPawn.col && (currentPawn.col - Column) <= currentMoves)
-            {
-                currentMoves -= Row - currentPawn.row;
-                currentPawn.row = Row;
-                currentPawn.col = Column;
-            }
+
           
-            
-            else{
-                    */
+            var savedCol = currentPawn.col;
+            var savedRow = currentPawn.row;
+            var savedMoves = currentMoves;
             if (Column < currentPawn.col && currentPawn.col - Column <= currentMoves)
             {
                 currentMoves -= currentPawn.col - Column;
@@ -285,6 +338,19 @@ namespace GameOne
                 currentMoves -= Column - currentPawn.col;
                 currentPawn.col = Column;
             }
+            var checkTwo = from pawn in grid
+                where
+                    pawn.GetType() == typeof (Pawn) && ((Pawn) pawn).col == currentPawn.col &&
+                    ((Pawn) pawn).row == currentPawn.row
+                select pawn;
+            if (checkTwo.Count() != 1)
+            {
+                currentPawn.col = savedCol;
+                currentMoves = savedMoves;
+            }
+
+            savedMoves = currentMoves;
+
             if (Row < currentPawn.row && currentPawn.row - Row <= currentMoves)
             {
                 currentMoves -= currentPawn.row - Row;
@@ -295,8 +361,20 @@ namespace GameOne
                 currentMoves -= Row - currentPawn.row;
                 currentPawn.row = Row;
             }
+            var checkTwoAgain = from pawn in grid
+                           where
+                               pawn.GetType() == typeof(Pawn) && ((Pawn)pawn).col == currentPawn.col &&
+                               ((Pawn)pawn).row == currentPawn.row
+                           select pawn;
+            if (checkTwoAgain.Count() != 1)
+            {
+                currentPawn.row = savedRow;
+                currentMoves = savedMoves;
+            }
+            Debug.WriteLine("Moved Got " + currentMoves);
             CheckMoves();
         }
+        
 
         public void setPawnToSplit(Pawn thePawn)
         {
@@ -329,6 +407,14 @@ namespace GameOne
             var handler = CollectionChanged;
             if (handler != null)
                 handler(this, args);
+        }
+
+        public void StartGame()
+        {
+            RollDice();
+            currentPlayer = currentRollDice%2+1;
+            MessageBox.Show("Player " + currentPlayer + " Starts");
+            
         }
     }
 }

@@ -57,8 +57,10 @@
             </ItemsControl>
 
         </Grid>
-
-        <Button Content="Roll a Dice" Height="23" HorizontalAlignment="Left"  Name="button1" VerticalAlignment="Top" Width="75" Click="DiceRoll" />
+        <StackPanel Orientation="Horizontal">
+            <Button Content="Play AI" Height="23" HorizontalAlignment="Left"  Name="button1" VerticalAlignment="Top" Width="75" Click="PlayAi" />
+            <Button Content="Next Player" Height="23" HorizontalAlignment="Left"  Name="button2" VerticalAlignment="Top" Width="75" Click="ChangePlayer" />
+            </StackPanel>
         <StackPanel Orientation="Horizontal">
             <Label FontSize="15">RolledDice: </Label>
         <Label Content="{Binding game.currentRollDice}" FontSize="15" FontWeight="Bold"></Label>
