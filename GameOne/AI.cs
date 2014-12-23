@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Linq;
+﻿using System.Linq;
 
 namespace GameOne
 {
@@ -49,49 +48,49 @@ namespace GameOne
                 {
                     case 0:
                     {
-                        game.MovePawn(enemyPawn.col, enemyPawn.row - 1);
+                        game.MoveOrSplitPawn(enemyPawn.col, enemyPawn.row - 1);
                         moveAround++;
                         break;
                     }
                     case 1:
                     {
-                        game.MovePawn(enemyPawn.col, enemyPawn.row + 1);
+                        game.MoveOrSplitPawn(enemyPawn.col, enemyPawn.row + 1);
                         moveAround++;
                         break;
                     }
                     case 2:
                     {
-                        game.MovePawn(enemyPawn.col - 1, enemyPawn.row );
+                        game.MoveOrSplitPawn(enemyPawn.col - 1, enemyPawn.row );
                         moveAround++;
                         break;
                     }
                     case 3:
                     {
-                        game.MovePawn(enemyPawn.col + 1, enemyPawn.row);
+                        game.MoveOrSplitPawn(enemyPawn.col + 1, enemyPawn.row);
                         moveAround++;
                         break;
                     }    
                     case 4:
                     {
-                        game.MovePawn(enemyPawn.col - 1, enemyPawn.row + 1);
+                        game.MoveOrSplitPawn(enemyPawn.col - 1, enemyPawn.row + 1);
                         moveAround++;
                         break;
                     }
                     case 5:
                     {
-                        game.MovePawn(enemyPawn.col - 1, enemyPawn.row - 1);
+                        game.MoveOrSplitPawn(enemyPawn.col - 1, enemyPawn.row - 1);
                         moveAround++;
                         break;
                     }
                     case 6:
                     {
-                        game.MovePawn(enemyPawn.col-1, enemyPawn.row - 1);
+                        game.MoveOrSplitPawn(enemyPawn.col-1, enemyPawn.row - 1);
                         moveAround++;
                         break;
                     }
                     case 7:
                     {
-                        game.MovePawn(enemyPawn.col+1, enemyPawn.row + 1);
+                        game.MoveOrSplitPawn(enemyPawn.col+1, enemyPawn.row + 1);
                         moveAround++;
                         break;
                     }

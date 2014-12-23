@@ -74,6 +74,7 @@
             <Label Content="{Binding game.currentMoves}" FontSize="15" FontWeight="Bold" />
             <Label FontSize="15">Current Player:</Label>
             <Label Content="{Binding game.currentPlayer}" FontSize="15" FontWeight="Bold" />
+            <Label Content="{Binding game.winnerText}" Visibility="{Binding game.showWinner}" FontSize="15" FontWeight="Bold" Foreground="Crimson" />
         </StackPanel>
     </StackPanel>
 

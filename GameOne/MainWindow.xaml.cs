@@ -82,7 +82,7 @@ namespace GameOne
             var obj = sender as ContentPresenter;
 
 
-            if (obj.Content.GetType() == typeof (Pawn) && game.currentPawn == null)
+            if (obj.Content.GetType() == typeof (Pawn))
             {
                 var thePawn = (Pawn) (from gridItem in game.grid
                     where gridItem.GetType() == typeof (Pawn) &&
@@ -95,14 +95,13 @@ namespace GameOne
 
         private void clickRectangle(object sender, RoutedEventArgs e)
         {
+            //CODE CLEANUP - Validation done in Game-class
+            //Boardtile -> movepawn -> splitpawn -> MoveOrSplitPawn()
+            //pawn -> setcurrentpawn
+            //pawn -> attackpawn
             var obj = sender as ContentPresenter;
-            if (obj.Content.GetType() == typeof (BoardTile) && game.pawnToSplit != null)
-            {
-                game.SplitPawn(Grid.GetColumn((UIElement) sender), Grid.GetRow((UIElement) sender));
-            }
-            else
-            {
-                if (obj.Content.GetType() == typeof (Pawn) && game.currentPawn == null)
+    
+                if (obj.Content.GetType() == typeof (Pawn))
                 {
                     var thePawn = (Pawn) (from gridItem in game.grid
                         where gridItem.GetType() == typeof (Pawn) &&
@@ -110,22 +109,14 @@ namespace GameOne
                               ((Pawn) gridItem).row == Grid.GetRow((UIElement) sender)
                         select gridItem).First();
                     game.setCurrentPawn(thePawn);
+                    game.AttackPawn(thePawn);
                 }
-                else if (obj.Content.GetType() == typeof (BoardTile) && game.currentPawn != null)
+                else if (obj.Content.GetType() == typeof (BoardTile))
                 {
-                    game.MovePawn(Grid.GetColumn((UIElement) sender), Grid.GetRow((UIElement) sender));
+                    game.MoveOrSplitPawn(Grid.GetColumn((UIElement) sender), Grid.GetRow((UIElement) sender));
                 }
-                if (game.currentPawn != null && obj.Content.GetType() == typeof (Pawn))
-                {
-                    var enemyPawn = (Pawn) (from gridItem in game.grid
-                        where gridItem.GetType() == typeof (Pawn) &&
-                              ((Pawn) gridItem).col == Grid.GetColumn((UIElement) sender) &&
-                              ((Pawn) gridItem).row == Grid.GetRow((UIElement) sender)
-                        select gridItem).First();
-                    game.setCurrentPawn(enemyPawn);
-                    game.AttackPawn(enemyPawn);
-                }
-            }
+      
+          
         }
 
 
@@ -164,7 +155,7 @@ namespace GameOne
         private void NewGameClick(object sender, RoutedEventArgs e)
         {
             game.EndGame();
-            //        game.NewGame();
+            
         }
     }
 }
